@@ -6,6 +6,12 @@ FROM gitpod/workspace-full
 #
 # More information: https://www.gitpod.io/docs/config-docker/
 
-# Download Flutter SDK
-RUN git clone https://github.com/flutter/flutter.git
+### FLUTTER ###
+
+# Download Flutter SDK stable
+RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1
 ENV PATH "$PATH:/home/gitpod/flutter/bin"
+
+## Initialize Flutter and Dart
+# the command below automatically downloads Dart sdk
+RUN flutter doctor
