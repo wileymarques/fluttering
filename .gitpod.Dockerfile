@@ -12,6 +12,5 @@ FROM gitpod/workspace-full
 RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1
 ENV PATH "$PATH:/home/gitpod/flutter/bin"
 
-## Initialize Flutter and Dart
-# the command below automatically downloads Dart sdk
-RUN flutter doctor
+## Precache Flutter web and Dart SDK
+RUN flutter precache --web
