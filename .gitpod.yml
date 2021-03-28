@@ -1,7 +1,8 @@
 image:
   file: .gitpod.Dockerfile
 
-# tasks:
+tasks:
+  - init: flutter pub get
 
 ports:
   - port: 9100
