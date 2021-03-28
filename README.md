@@ -1,5 +1,15 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/wilmarques/flutter)
+[![Gitpod click here to run](https://img.shields.io/badge/Gitpod-click--here--to--run-blue?logo=gitpod)](https://gitpod.io/#https://github.com/wilmarques/flutter)
 
-# flutter
+# Fluttering
 
 Messing around with Flutter.
+
+## Requirements
+
+Prepare your environment following these intructions: <https://flutter.dev/docs/get-started/install>.
+
+Or run this repo on Gitpod, clicking on the badge.
+
+## Web
+
+To run the web app: `flutter run -d web-server`.
