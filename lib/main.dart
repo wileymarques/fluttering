@@ -1,108 +1,193 @@
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(SignUpApp());
 
-class MyApp extends StatelessWidget {
+class SignUpApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Startup Name Generator',
-      theme: ThemeData(
-        primaryColor: Colors.white,
-      ),
-      home: RandomWords(),
-    );
-  }
-}
-
-class RandomWords extends StatefulWidget {
-  @override
-  _RandomWordsState createState() => _RandomWordsState();
-}
-
-class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _saved = <WordPair>{};
-  final _biggerFont = TextStyle(fontSize: 18.0);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Startup Name Generator'),
-        actions: [
-          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-        ],
-      ),
-      body: _buildSuggestions(),
-    );
-  }
-
-  Widget _buildSuggestions() {
-    return ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemBuilder: (context, i) {
-          if (i.isOdd) return Divider();
-
-          final index = i ~/ 2;
-          if (index >= _suggestions.length) {
-            _suggestions.addAll(generateWordPairs().take(10));
-          }
-          return _buildRow(_suggestions[index]);
-        });
-  }
-
-  Widget _buildRow(WordPair pair) {
-    final alreadySaved = _saved.contains(pair);
-    return ListTile(
-      title: Text(
-        pair.asPascalCase,
-        style: _biggerFont,
-      ),
-      trailing: Icon(
-        alreadySaved ? Icons.favorite : Icons.favorite_border,
-        color: alreadySaved ? Colors.red : null,
-      ),
-      onTap: () {
-        setState(() {
-          if (alreadySaved) {
-            _saved.remove(pair);
-          } else {
-            _saved.add(pair);
-          }
-        });
+      routes: {
+        '/': (context) => SignUpScreen(),
+        '/welcome': (context) => WelcomeScreen(),
       },
     );
   }
+}
 
-  void _pushSaved() {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (BuildContext context) {
-          final tiles = _saved.map(
-            (WordPair pair) {
-              return ListTile(
-                title: Text(
-                  pair.asPascalCase,
-                  style: _biggerFont,
-                ),
-              );
-            },
-          );
-          final divided = ListTile.divideTiles(
-            context: context,
-            tiles: tiles,
-          ).toList();
+class SignUpScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[200],
+      body: Center(
+        child: SizedBox(
+          width: 400,
+          child: Card(
+            child: SignUpForm(),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Saved Suggestions'),
+class WelcomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text('Welcome!', style: Theme.of(context).textTheme.headline2),
+      ),
+    );
+  }
+}
+
+class SignUpForm extends StatefulWidget {
+  @override
+  _SignUpFormState createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  final _firstNameTextController = TextEditingController();
+  final _lastNameTextController = TextEditingController();
+  final _usernameTextController = TextEditingController();
+
+  double _formProgress = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      onChanged: _updateFormProgress,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedProgressIndicator(value: _formProgress),
+          Text('Sign up', style: Theme.of(context).textTheme.headline4),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _firstNameTextController,
+              decoration: InputDecoration(hintText: 'First name'),
             ),
-            body: ListView(children: divided),
-          );
-        },
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _lastNameTextController,
+              decoration: InputDecoration(hintText: 'Last name'),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+              controller: _usernameTextController,
+              decoration: InputDecoration(hintText: 'Username'),
+            ),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              foregroundColor:
+                  MaterialStateColor.resolveWith((Set<MaterialState> states) {
+                return states.contains(MaterialState.disabled)
+                    ? Colors.grey
+                    : Colors.white;
+              }),
+              backgroundColor:
+                  MaterialStateColor.resolveWith((Set<MaterialState> states) {
+                return states.contains(MaterialState.disabled)
+                    ? Colors.white
+                    : Colors.blue;
+              }),
+            ),
+            onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
+            child: Text('Sign up'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showWelcomeScreen() {
+    Navigator.of(context).pushNamed('/welcome');
+  }
+
+  void _updateFormProgress() {
+    var progress = 0.0;
+    final controllers = [
+      _firstNameTextController,
+      _lastNameTextController,
+      _usernameTextController
+    ];
+
+    for (final controller in controllers) {
+      if (controller.value.text.isNotEmpty) {
+        progress += 1 / controllers.length;
+      }
+    }
+
+    setState(() {
+      _formProgress = progress;
+    });
+  }
+}
+
+class AnimatedProgressIndicator extends StatefulWidget {
+  final double value;
+
+  AnimatedProgressIndicator({
+    required this.value,
+  });
+
+  @override
+  State<StatefulWidget> createState() {
+    return _AnimatedProgressIndicatorState();
+  }
+}
+
+class _AnimatedProgressIndicatorState extends State<AnimatedProgressIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+  late Animation<double> _curveAnimation;
+
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+        duration: Duration(milliseconds: 1200), vsync: this);
+
+    final colorTween = TweenSequence([
+      TweenSequenceItem(
+        tween: ColorTween(begin: Colors.red, end: Colors.orange),
+        weight: 1,
+      ),
+      TweenSequenceItem(
+        tween: ColorTween(begin: Colors.orange, end: Colors.yellow),
+        weight: 1,
+      ),
+      TweenSequenceItem(
+        tween: ColorTween(begin: Colors.yellow, end: Colors.green),
+        weight: 1,
+      ),
+    ]);
+
+    _colorAnimation = _controller.drive(colorTween);
+    _curveAnimation = _controller.drive(CurveTween(curve: Curves.easeIn));
+  }
+
+  @override
+  void didUpdateWidget(oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller.animateTo(widget.value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) => LinearProgressIndicator(
+        value: _curveAnimation.value,
+        valueColor: _colorAnimation,
+        backgroundColor: _colorAnimation.value?.withOpacity(0.4),
       ),
     );
   }
