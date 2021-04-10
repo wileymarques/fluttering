@@ -52,11 +52,14 @@ class _SignUpFormState extends State<SignUpForm> {
   final _lastNameTextController = TextEditingController();
   final _usernameTextController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+
   double _formProgress = 0;
 
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       onChanged: _updateFormProgress,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -68,6 +71,12 @@ class _SignUpFormState extends State<SignUpForm> {
             child: TextFormField(
               controller: _firstNameTextController,
               decoration: InputDecoration(hintText: 'First name'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter your First name';
+                }
+                return null;
+              },
             ),
           ),
           Padding(
@@ -75,6 +84,12 @@ class _SignUpFormState extends State<SignUpForm> {
             child: TextFormField(
               controller: _lastNameTextController,
               decoration: InputDecoration(hintText: 'Last name'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Enter your Last name';
+                }
+                return null;
+              },
             ),
           ),
           Padding(
@@ -82,9 +97,15 @@ class _SignUpFormState extends State<SignUpForm> {
             child: TextFormField(
               controller: _usernameTextController,
               decoration: InputDecoration(hintText: 'Username'),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Provide an username';
+                }
+                return null;
+              },
             ),
           ),
-          TextButton(
+          ElevatedButton(
             style: ButtonStyle(
               foregroundColor:
                   MaterialStateColor.resolveWith((Set<MaterialState> states) {
@@ -99,7 +120,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     : Colors.blue;
               }),
             ),
-            onPressed: _formProgress == 1 ? _showWelcomeScreen : null,
+            onPressed: _showWelcomeScreen,
             child: Text('Sign up'),
           ),
         ],
@@ -108,7 +129,9 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
   void _showWelcomeScreen() {
-    Navigator.of(context).pushNamed('/welcome');
+    if (_formKey.currentState!.validate()) {
+      Navigator.of(context).pushNamed('/welcome');
+    }
   }
 
   void _updateFormProgress() {
