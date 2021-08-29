@@ -1,7 +1,9 @@
 {
-	"dockerFile": "Dockerfile",
-    "extensions": [
-        "dart-code.flutter",
-        "dart-code.dart-code"
-	]
+  "dockerFile": "Dockerfile",
+  "extensions": [
+    "dart-code.flutter",
+    "dart-code.dart-code",
+    "editorconfig.editorconfig"
+  ],
+  "postCreateCommand": "flutter pub get"
 }

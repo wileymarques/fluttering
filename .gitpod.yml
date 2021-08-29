@@ -10,6 +10,6 @@ ports:
 
 vscode:
   extensions:
-    - editorconfig.editorconfig
-    - dart-code.dart-code
     - dart-code.flutter
+    - dart-code.dart-code
+    - editorconfig.editorconfig
