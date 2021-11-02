@@ -9,7 +9,7 @@ FROM gitpod/workspace-full
 ### FLUTTER ###
 
 # Download Flutter SDK stable
-RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1
+RUN git clone https://github.com/flutter/flutter.git -b stable
 ENV PATH "$PATH:/home/gitpod/flutter/bin"
 
 ## Precache Flutter web and Dart SDK
